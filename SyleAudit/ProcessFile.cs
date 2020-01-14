@@ -22,28 +22,29 @@ namespace SyleAudit
             var styledata = styleProcess.checkForStyles(path, debugMode);
 
             validateStylesExistInHTML(htmlData, styledata);
-            checkhtmlForStyles(htmlData, styledata);
+            //checkhtmlForStyles(htmlData, styledata);
         }
 
 
         static void validateStylesExistInHTML(List<ClassInfo> htmldata, List<ClassInfo> styledata)
         {
             utility.log_green("Checking for styles that are not in HTML files....");
-            var showLine = false;
-            List<string> alerts = new List<string>();
+            //var showLine = false;
+            //List<string> alerts = new List<string>();
             foreach (var sd in styledata)
             {
+                //if (!showLine)
+                //{
+                //    utility.log_yellow("checking file: " + sd.fileName + " - " + sd.path);
+                //}
+                //showLine = true;
                 var styleName = sd.className;
                 var exists = htmldata.Where(x => x.className == styleName).Count() > 0;
                 if (!exists)
                 {
-                    if (!showLine)
-                    {
-                        utility.log_yellow("Alerts found for file: " + sd.fileName + " - " + sd.path);
-                    }
-                    showLine = true;
+
                     
-                    utility.log_red("----- Line " + sd.lineNo.ToString() + " contains class '" + styleName + "' which was not found in any html");
+                    utility.log_red(sd.fileName + " Line " + sd.lineNo.ToString() + " contains class '" + styleName + "' which was not found in any html");
                 }
 
             }

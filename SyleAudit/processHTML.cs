@@ -20,7 +20,7 @@ namespace SyleAudit
             utility.log_yellow("Found " + filePaths.Length.ToString() + " .html files at folder");
 
             //var cntNodeModFiles = filePaths.Where(x => x.Contains("node_module")).Count();
-            filePaths = filePaths.Where(x => !x.Contains("node_module")).ToArray();
+            filePaths = filePaths.Where(x => !x.Contains("node_module") && !x.Contains("testbed") && !x.Contains("dist")).ToArray();
 
 
             classes = new List<ClassInfo>();
@@ -51,26 +51,60 @@ namespace SyleAudit
                 int lineNum = 0;
                 while (!reader.EndOfStream)
                 {
-                    var line = reader.ReadLine();
+                    var line = reader.ReadLine().Trim();
                     lineNum++;
-                    if (line.Contains("class"))
+                    List<string> classes = new List<string>();
+                    if (line.ToUpper().Contains("CLASS") )
                     {
-                        var classes = line.Split(new[] { "class" }, StringSplitOptions.None)[1]
-                            .Replace("]","")
-                            .Replace(">","")
-                            .Replace("\"", "")
-                            .Replace("-", "")
-                            .Replace("=","")
-                            .Split(' ').ToList();
+                        if (!line.ToUpper().Contains("CLASS]"))
+                        {
+
+                            var startIndex = line.IndexOf("class");
+
+                            int realStartIndex = 0;
+                            int stopIndex = 0;
+                            bool startChecking = false;
+                            if (startIndex != -1)
+                            {
+                                for (int i = startIndex; i < line.Length; i++)
+                                {
+                                    if (!startChecking)
+                                    {
+                                        if (line[i] == '"')
+                                        {
+                                            startChecking = true;
+                                            realStartIndex = i + 1;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (line[i] == '"')
+                                        {
+                                            stopIndex = i;
+                                            break;
+                                        }
+                                    }
+
+                                }
+                                classes = line.Substring(realStartIndex, stopIndex - realStartIndex).Split(' ').ToList();
+                            }
+                        }
+
+
+                        
+
                         classes.ForEach(x =>
                         {
-                            var li = new ClassInfo();
-                            li.lineNo = lineNum;
-                            li.className = x;
-                            li.path = filePath;
-                            li.fileName = fileName;
+                            if (!string.IsNullOrWhiteSpace(x))
+                            {
+                                var li = new ClassInfo();
+                                li.lineNo = lineNum;
+                                li.className = x;
+                                li.path = filePath;
+                                li.fileName = fileName;
 
-                            hi.Add(li);
+                                hi.Add(li);
+                            }
                         });
                         
                     }

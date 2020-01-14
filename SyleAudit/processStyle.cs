@@ -39,13 +39,13 @@ namespace SyleAudit
         public List<ClassInfo> checkForStyles(string path, bool debugMode)
         {
             this._styleSheets.Add(path);
-            List<string> cssfilePaths = Directory.GetFiles(path, "*.css", SearchOption.AllDirectories).ToList().Where(x => !x.Contains("node_module")).ToList();
+            List<string> cssfilePaths = Directory.GetFiles(path, "*.css", SearchOption.AllDirectories).ToList().Where(x => !x.Contains("node_module") && !x.Contains("dist") && !x.Contains("dist")).ToList();
             utility.log_yellow("Found " + cssfilePaths.Count.ToString() + " .css files at folder");
 
-            List<string> scssfilePaths = Directory.GetFiles(path, "*.scss", SearchOption.AllDirectories).ToList().Where(x => !x.Contains("node_module")).ToList();
+            List<string> scssfilePaths = Directory.GetFiles(path, "*.scss", SearchOption.AllDirectories).ToList().Where(x => !x.Contains("node_module") && !x.Contains("dist") && !x.Contains("dist")).ToList();
             utility.log_yellow("Found " + scssfilePaths.Count.ToString() + " .scss files at folder");
 
-            List<string> sassfilePaths = Directory.GetFiles(path, "*.sass", SearchOption.AllDirectories).ToList().Where(x => !x.Contains("node_module")).ToList();
+            List<string> sassfilePaths = Directory.GetFiles(path, "*.sass", SearchOption.AllDirectories).ToList().Where(x => !x.Contains("node_module") && !x.Contains("dist") && !x.Contains("dist")).ToList();
             utility.log_yellow("Found " + sassfilePaths.Count.ToString() + " .sass files at folder");
 
             //var cntNodeModFiles = filePaths.Where(x => x.Contains("node_module")).Count();
@@ -54,7 +54,7 @@ namespace SyleAudit
             filePaths.AddRange(scssfilePaths);
             filePaths.AddRange(sassfilePaths);
 
-            //List<StyleInfo> files = new List<StyleInfo>();
+            filePaths = filePaths.Where(x => !x.ToUpper().Contains("KENDO")).ToList(); //removing kendo for now
             List<ClassInfo> files = new List<ClassInfo>();
             foreach (string file in filePaths)
             {
