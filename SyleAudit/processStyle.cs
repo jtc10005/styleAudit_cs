@@ -83,7 +83,7 @@ namespace SyleAudit
 
         public List<ClassInfo> getInfo(string filePath)
         {
-            
+            string[] array = Properties.Settings.Default.InvalidTypes.Split(',');
             var hi = new List<ClassInfo>();
             var HTMLFileInfo = new FileInfo(filePath);
             var fileName = HTMLFileInfo.Name;
@@ -97,11 +97,11 @@ namespace SyleAudit
                     //if (line.IndexOf(".") > -1 && line.IndexOf("html") == -1)
                     if(line.Contains(".") && !line.Contains("@") && !line.Contains("//") && !line.Contains("http") && !line.Contains(";"))
                     {
-                        var splitClasses = line.Replace("{", "").Split('.').ToList();
+                        var splitClasses = line.Replace("{", "").Replace(">","").Split('.').ToList();
                         foreach(var x in splitClasses)
                         {
                             var style = x.Trim();
-                            if (!string.IsNullOrWhiteSpace(style))
+                            if (!string.IsNullOrWhiteSpace(style) && Array.IndexOf(array, style) == -1)
                             {
                                 var si = new ClassInfo();
                                 si.className = style;
